@@ -14,7 +14,7 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Simple sanitization
+    // Sanitize inputs
     $username = mysqli_real_escape_string($conn, $username);
     $password = mysqli_real_escape_string($conn, $password);
 
@@ -23,8 +23,11 @@ if (isset($_POST['login'])) {
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        $_SESSION['username'] = $username;
-        echo "<script>alert('Login successful!'); window.location='welcome.php';</script>";
+        $row = $result->fetch_assoc();
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['name'] = $row['name']; // store the name for homepage
+        header("Location: homepage.php");
+        exit();
     } else {
         echo "<script>alert('Invalid username or password');</script>";
     }
