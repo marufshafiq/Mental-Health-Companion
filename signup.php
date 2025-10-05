@@ -9,24 +9,33 @@ if ($conn->connect_error) {
 
 // Signup logic
 if (isset($_POST['signup'])) {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $username = $_POST['username'];
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
     // Sanitize inputs
     $name = mysqli_real_escape_string($conn, $name);
     $email = mysqli_real_escape_string($conn, $email);
     $username = mysqli_real_escape_string($conn, $username);
-    $password = mysqli_real_escape_string($conn, $password);
+    
+    // Hash the password for security
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Check if username exists
-    $check = $conn->query("SELECT * FROM users WHERE username='$username'");
-    if ($check->num_rows > 0) {
+    // Generate a random unique ID
+    do {
+        $id = rand(100000, 999999); // 6-digit random ID
+        $checkId = $conn->query("SELECT * FROM users WHERE id='$id'");
+    } while ($checkId->num_rows > 0);
+
+    // Check if username already exists
+    $checkUser = $conn->query("SELECT * FROM users WHERE username='$username'");
+    if ($checkUser->num_rows > 0) {
         echo "<script>alert('Username already taken');</script>";
     } else {
-        $sql = "INSERT INTO users (name, email, username, password)
-                VALUES ('$name', '$email', '$username', '$password')";
+        // Insert into database
+        $sql = "INSERT INTO users (id, name, email, username, password)
+                VALUES ('$id', '$name', '$email', '$username', '$hashedPassword')";
         if ($conn->query($sql) === TRUE) {
             echo "<script>alert('Signup successful! Please login.'); window.location='login.php';</script>";
         } else {
@@ -42,6 +51,7 @@ if (isset($_POST['signup'])) {
   <meta charset="UTF-8">
   <title>Sign Up</title>
   <link rel="stylesheet" href="signup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="signup-container">

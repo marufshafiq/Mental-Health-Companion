@@ -14,17 +14,12 @@ $name = $_SESSION['name'];
 <head>
   <meta charset="UTF-8">
   <title>Home</title>
-  <link rel="stylesheet" href="homepage.css">
+  <!-- Load Dashboard CSS -->
+  <link rel="stylesheet" href="dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h2>Welcome, <?php echo htmlspecialchars($name); ?> 👋</h2>
-    <p>You have successfully logged in to your account.</p>
-    <a href="logout.php"><button>Logout</button></a>
-
-    <footer>
-      <p>Mental Health Companion © 2025</p>
-    </footer>
-  </div>
+  <!-- Include the dashboard content -->
+  <?php include 'dashboard.php'; ?>
 </body>
 </html>
