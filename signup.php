@@ -19,8 +19,8 @@ if (isset($_POST['signup'])) {
     $email = mysqli_real_escape_string($conn, $email);
     $username = mysqli_real_escape_string($conn, $username);
     
-    // Hash the password for security
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    // Store the password as-is for now (we'll handle hashing in login.php)
+    $storedPassword = $password;
 
     // Generate a random unique ID
     do {
@@ -35,7 +35,7 @@ if (isset($_POST['signup'])) {
     } else {
         // Insert into database
         $sql = "INSERT INTO users (id, name, email, username, password)
-                VALUES ('$id', '$name', '$email', '$username', '$hashedPassword')";
+                VALUES ('$id', '$name', '$email', '$username', '$storedPassword')";
         if ($conn->query($sql) === TRUE) {
             echo "<script>alert('Signup successful! Please login.'); window.location='login.php';</script>";
         } else {
