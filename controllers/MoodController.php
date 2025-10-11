@@ -10,7 +10,7 @@ class MoodController {
     }
 
     private function getConnection() {
-        $host = 'localhost';
+        $host = 'localhost:3307';
         $dbname = 'isd';
         $username = 'root';
         $password = '';
