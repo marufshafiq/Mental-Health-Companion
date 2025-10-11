@@ -43,6 +43,16 @@ try {
     }
 }
 
+/**
+ * Get database connection (Singleton pattern)
+ * 
+ * @return PDO Database connection object
+ */
+function getDb() {
+    global $pdo;
+    return $pdo;
+}
+
 // Optional: mysqli connection for compatibility
 // Uncomment if needed
 /*

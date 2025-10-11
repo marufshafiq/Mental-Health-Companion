@@ -24,7 +24,34 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
     <link rel="stylesheet" href="../dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Apply sidebar state IMMEDIATELY to prevent flash -->
+    <script>
+        (function() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                document.documentElement.classList.add('sidebar-collapsed-on-load');
+            }
+        })();
+    </script>
     <style>
+        /* Apply collapsed state immediately on page load */
+        .sidebar-collapsed-on-load .sidebar {
+            width: 80px;
+            padding: 2rem 0.5rem;
+        }
+        .sidebar-collapsed-on-load .sidebar h2,
+        .sidebar-collapsed-on-load .sidebar .nav-text {
+            opacity: 0;
+            width: 0;
+        }
+        .sidebar-collapsed-on-load .sidebar nav a {
+            padding: 1rem 0.5rem;
+            justify-content: center;
+        }
+        .sidebar-collapsed-on-load .main-content {
+            margin-left: 80px;
+        }
+        
         /* Chat-specific styles */
         .chat-container {
             background: var(--card-bg);
@@ -278,20 +305,45 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
 <body>
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h2>Mental Health Companion</h2>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header" onclick="toggleSidebar()" title="Click to collapse/expand">
+                <div class="sidebar-logo">🧠</div>
+                <h2>Mental Health Companion</h2>
+            </div>
             <nav>
-                <a href="../dashboard.php">📊 Dashboard</a>
-                <a href="../journal.php">📓 Journal</a>
-                <a href="../mood.php">😊 Mood Tracker</a>
-                <a href="chat.php" class="active">💬 AI Chatbot</a>
-                <a href="../profile.php">👤 Profile</a>
-                <a href="../logout.php">🚪 Logout</a>
+                <a href="../dashboard.php" data-tooltip="Dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="../journal.php" data-tooltip="Journal">
+                    <span class="nav-icon">📓</span>
+                    <span class="nav-text">Journal</span>
+                </a>
+                <a href="../mood.php" data-tooltip="Mood Tracker">
+                    <span class="nav-icon">😊</span>
+                    <span class="nav-text">Mood Tracker</span>
+                </a>
+                <a href="chat.php" class="active" data-tooltip="AI Chatbot">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-text">AI Chatbot</span>
+                </a>
+                <a href="meditation.php" data-tooltip="Meditation & Resources">
+                    <span class="nav-icon">🧘‍♀️</span>
+                    <span class="nav-text">Meditation & Resources</span>
+                </a>
+                <a href="../profile.php" data-tooltip="Profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-text">Profile</span>
+                </a>
+                <a href="../logout.php" data-tooltip="Logout">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Logout</span>
+                </a>
             </nav>
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <div class="welcome-section">
                 <h1>AI Mental Health Chatbot</h1>
                 <p>Chat with our AI assistant for mental health support and guidance. Available 24/7.</p>
@@ -349,6 +401,36 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
 
     <!-- Toast notification -->
     <div class="toast" id="toast"></div>
+
+    <!-- Sidebar toggle script -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('sidebar-collapsed');
+            
+            // Save state to localStorage
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+        }
+
+        // Restore sidebar state on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            
+            // Remove the temporary class
+            document.documentElement.classList.remove('sidebar-collapsed-on-load');
+            
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('sidebar-collapsed');
+            }
+        });
+    </script>
 
     <!-- Include chat JavaScript -->
     <script src="../assets/js/chat.js"></script>

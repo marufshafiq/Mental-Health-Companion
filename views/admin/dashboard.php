@@ -16,11 +16,51 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Mental Health Companion</title>
-    <link rel="stylesheet" href="../../dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #5C6BC0;
+            --background-color: #F5F7FA;
+            --text-primary: #2C3E50;
+            --text-secondary: #606F7B;
+            --success-color: #68D391;
+            --warning-color: #F6AD55;
+            --danger-color: #FC8181;
+            --card-bg: #FFFFFF;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            margin-left: 0;
+            background: var(--background-color);
+            max-width: 100%;
+            width: 100%;
+        }
+
         .admin-header {
             background: linear-gradient(135deg, #F6AD55, #FC8181);
             color: white;
@@ -126,6 +166,9 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         .action-btn:hover {
@@ -133,6 +176,7 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
             background: var(--primary-color);
             color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
         }
 
         .chart-container {
@@ -153,29 +197,17 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h2>Mental Health Companion</h2>
-            <nav>
-                <a href="../../dashboard.php">📊 Dashboard</a>
-                <a href="../../journal.php">📓 Journal</a>
-                <a href="../../mood.php">😊 Mood Tracker</a>
-                <a href="../chat.php">💬 AI Chatbot</a>
-                <a href="../resources/index.php">📚 Resources</a>
-                <a href="../../profile.php">👤 Profile</a>
-                <a href="../../logout.php">🚪 Logout</a>
-                <a href="../admin.php" class="active">👑 Admin Panel</a>
-            </nav>
-        </div>
-
         <!-- Main Content -->
         <div class="main-content">
             <div class="admin-header">
                 <i class="fas fa-crown"></i>
-                <div>
+                <div style="flex: 1;">
                     <h1>Admin Dashboard</h1>
                     <p>System overview and analytics</p>
                 </div>
+                <a href="../../logout.php" style="padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
 
             <!-- Statistics Grid -->
@@ -235,11 +267,11 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
                     <i class="fas fa-tools"></i> Admin Actions
                 </div>
                 <div class="admin-actions">
-                    <a href="../resources/index.php" class="action-btn">
+                    <a href="../views/resources/resource.php" class="action-btn">
                         <i class="fas fa-link"></i>
                         Manage Resources
                     </a>
-                    <a href="../resources/create.php" class="action-btn">
+                    <a href="../views/resources/create.php" class="action-btn">
                         <i class="fas fa-plus"></i>
                         Add Resource
                     </a>
