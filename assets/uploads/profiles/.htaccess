@@ -1,0 +1,11 @@
+# Prevent PHP execution in uploads directory
+<FilesMatch "\.(php|php3|php4|php5|phtml)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Allow only image files
+<FilesMatch "\.(jpg|jpeg|png|gif)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>

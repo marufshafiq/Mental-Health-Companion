@@ -92,7 +92,7 @@ $name = $_SESSION['name'];
                     <span class="nav-icon">🧘‍♀️</span>
                     <span class="nav-text">Meditation & Resources</span>
                 </a>
-                <a href="profile.php" data-tooltip="Profile">
+                <a href="views/profile/profile.php" data-tooltip="Profile">
                     <span class="nav-icon">👤</span>
                     <span class="nav-text">Profile</span>
                 </a>

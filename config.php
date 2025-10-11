@@ -16,7 +16,7 @@ define('DB_PASS', '');
 // Chatbot API Configuration
 // Replace these with your actual API credentials
 define('CHATBOT_API_URL', 'https://openrouter.ai/api/v1/chat/completions');
-define('CHATBOT_API_KEY', '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');
+define('CHATBOT_API_KEY', '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');
 
 // Application Settings
 define('APP_ENV', 'development'); // development or production
