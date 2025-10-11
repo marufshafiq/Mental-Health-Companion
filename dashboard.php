@@ -14,14 +14,50 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
 }
 
 require_once __DIR__ . '/controllers/JournalController.php';
-require_once __DIR__ . '/controllers/MoodController.php';
+require_once __DIR__ . '/config.php';
 
 $journalController = new JournalController($_SESSION['user_id']);
-$moodController = new MoodController($_SESSION['user_id']);
+
+// Get mood data directly from database (like API does)
+function getMoodHistory($userId, $days = 7) {
+    try {
+        $db = getDb();
+        $sql = "SELECT id, mood_type, mood_value, notes, entry_date, entry_time, created_at 
+                FROM mood_entries 
+                WHERE user_id = ? 
+                AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                ORDER BY created_at DESC";
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$userId, $days]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching mood history: " . $e->getMessage());
+        return [];
+    }
+}
+
+function getAverageMood($userId, $days = 7) {
+    try {
+        $db = getDb();
+        $sql = "SELECT AVG(mood_value) as average 
+                FROM mood_entries 
+                WHERE user_id = ? 
+                AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)";
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$userId, $days]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['average'] ? round($result['average'], 1) : 3.0;
+    } catch (PDOException $e) {
+        error_log("Error calculating average mood: " . $e->getMessage());
+        return 3.0;
+    }
+}
 
 $recentEntries = $journalController->getEntries();
-$recentMoods = $moodController->getMoodHistory(7); // Last 7 days
-$averageMood = $moodController->getAverageMood(7);
+$recentMoods = getMoodHistory($_SESSION['user_id'], 7); // Last 7 days
+$averageMood = getAverageMood($_SESSION['user_id'], 7);
 
 $name = $_SESSION['name'];
 ?>
