@@ -400,7 +400,7 @@ if (!isset($resources) || !isset($tip)) {
                     <span class="nav-icon">🧘‍♀️</span>
                     <span class="nav-text">Meditation & Resources</span>
                 </a>
-                <a href="../profile.php" data-tooltip="Profile">
+                <a href="profile/profile.php" data-tooltip="Profile">
                     <span class="nav-icon">👤</span>
                     <span class="nav-text">Profile</span>
                 </a>
