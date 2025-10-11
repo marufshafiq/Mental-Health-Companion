@@ -44,9 +44,13 @@ $name = $_SESSION['name'];
                 <a href="dashboard.php" class="active">📊 Dashboard</a>
                 <a href="journal.php">📓 Journal</a>
                 <a href="mood.php">� Mood Tracker</a>
-                <a href="chatbot.php">💬 Chatbot</a>
+                <a href="views/chat.php">💬 Chatbot</a>
                 <a href="profile.php">👤 Profile</a>
                 <a href="logout.php">🚪 Logout</a>
+                <!-- Admin Panel Link (visible only to admin users) -->
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="views/admin.php">👑 Admin Panel</a>
+                <?php endif; ?>
             </nav>
         </div>
 
