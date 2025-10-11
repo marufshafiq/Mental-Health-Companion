@@ -38,12 +38,14 @@ if (isset($_POST['login'])) {
          */
         if (isset($_SESSION['email']) && defined('APP_ADMIN_EMAIL') && $_SESSION['email'] === APP_ADMIN_EMAIL) {
             $_SESSION['role'] = 'admin';
+            // Redirect admin users to admin panel
+            header("Location: views/admin.php");
+            exit();
         } else {
             $_SESSION['role'] = 'user'; // Default role for regular users
+            header("Location: homepage.php");
+            exit();
         }
-        
-        header("Location: homepage.php");
-        exit();
     } else {
         echo "<script>alert('Invalid username or password');</script>";
     }
