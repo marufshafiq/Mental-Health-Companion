@@ -14,14 +14,50 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
 }
 
 require_once __DIR__ . '/controllers/JournalController.php';
-require_once __DIR__ . '/controllers/MoodController.php';
+require_once __DIR__ . '/config.php';
 
 $journalController = new JournalController($_SESSION['user_id']);
-$moodController = new MoodController($_SESSION['user_id']);
+
+// Get mood data directly from database (like API does)
+function getMoodHistory($userId, $days = 7) {
+    try {
+        $db = getDb();
+        $sql = "SELECT id, mood_type, mood_value, notes, entry_date, entry_time, created_at 
+                FROM mood_entries 
+                WHERE user_id = ? 
+                AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                ORDER BY created_at DESC";
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$userId, $days]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching mood history: " . $e->getMessage());
+        return [];
+    }
+}
+
+function getAverageMood($userId, $days = 7) {
+    try {
+        $db = getDb();
+        $sql = "SELECT AVG(mood_value) as average 
+                FROM mood_entries 
+                WHERE user_id = ? 
+                AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)";
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$userId, $days]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['average'] ? round($result['average'], 1) : 3.0;
+    } catch (PDOException $e) {
+        error_log("Error calculating average mood: " . $e->getMessage());
+        return 3.0;
+    }
+}
 
 $recentEntries = $journalController->getEntries();
-$recentMoods = $moodController->getMoodHistory(7); // Last 7 days
-$averageMood = $moodController->getAverageMood(7);
+$recentMoods = getMoodHistory($_SESSION['user_id'], 7); // Last 7 days
+$averageMood = getAverageMood($_SESSION['user_id'], 7);
 
 $name = $_SESSION['name'];
 ?>
@@ -35,22 +71,82 @@ $name = $_SESSION['name'];
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Apply sidebar state IMMEDIATELY to prevent flash -->
+    <script>
+        (function() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                document.documentElement.classList.add('sidebar-collapsed-on-load');
+            }
+        })();
+    </script>
+    <style>
+        /* Apply collapsed state immediately on page load */
+        .sidebar-collapsed-on-load .sidebar {
+            width: 80px;
+            padding: 2rem 0.5rem;
+        }
+        .sidebar-collapsed-on-load .sidebar h2,
+        .sidebar-collapsed-on-load .sidebar .nav-text {
+            opacity: 0;
+            width: 0;
+        }
+        .sidebar-collapsed-on-load .sidebar nav a {
+            padding: 1rem 0.5rem;
+            justify-content: center;
+        }
+        .sidebar-collapsed-on-load .main-content {
+            margin-left: 80px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h2>Mental Health Companion</h2>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header" onclick="toggleSidebar()" title="Click to collapse/expand">
+                <div class="sidebar-logo">🧠</div>
+                <h2>Mental Health Companion</h2>
+            </div>
             <nav>
-                <a href="dashboard.php" class="active">📊 Dashboard</a>
-                <a href="journal.php">📓 Journal</a>
-                <a href="mood.php">� Mood Tracker</a>
-                <a href="chatbot.php">💬 Chatbot</a>
-                <a href="profile.php">👤 Profile</a>
-                <a href="logout.php">🚪 Logout</a>
+                <a href="dashboard.php" class="active" data-tooltip="Dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="journal.php" data-tooltip="Journal">
+                    <span class="nav-icon">📓</span>
+                    <span class="nav-text">Journal</span>
+                </a>
+                <a href="mood.php" data-tooltip="Mood Tracker">
+                    <span class="nav-icon">😊</span>
+                    <span class="nav-text">Mood Tracker</span>
+                </a>
+                <a href="views/chat.php" data-tooltip="AI Chatbot">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-text">Chatbot</span>
+                </a>
+                <a href="views/meditation.php" data-tooltip="Meditation & Resources">
+                    <span class="nav-icon">🧘‍♀️</span>
+                    <span class="nav-text">Meditation & Resources</span>
+                </a>
+                <a href="views/profile/profile.php" data-tooltip="Profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-text">Profile</span>
+                </a>
+                <a href="logout.php" data-tooltip="Logout">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Logout</span>
+                </a>
+                <!-- Admin Panel Link (visible only to admin users) -->
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="views/admin.php" data-tooltip="Admin Panel">
+                    <span class="nav-icon">👑</span>
+                    <span class="nav-text">Admin Panel</span>
+                </a>
+                <?php endif; ?>
             </nav>
         </div>
 
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <div class="welcome-section">
                 <h1>Welcome, <?php echo htmlspecialchars($name); ?> 👋</h1>
                 <p class="date"><?php echo date('l, F j, Y'); ?></p>
@@ -193,6 +289,34 @@ $name = $_SESSION['name'];
                         }
                     }
                 }
+            }
+        });
+
+        // Sidebar Toggle Functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('sidebar-collapsed');
+            
+            // Save state to localStorage
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+        }
+
+        // Restore sidebar state on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            
+            // Remove the temporary class
+            document.documentElement.classList.remove('sidebar-collapsed-on-load');
+            
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('sidebar-collapsed');
             }
         });
     </script>

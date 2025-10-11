@@ -1,8 +1,11 @@
 <?php
 session_start();
 
+// Load configuration
+require_once __DIR__ . '/config.php';
+
 // Database connection
-$conn = new mysqli("localhost", "root", "", "isd");
+$conn = new mysqli("localhost", "root", "", "isd","3307");
 
 // Check connection
 if ($conn->connect_error) {
@@ -24,10 +27,25 @@ if (isset($_POST['login'])) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+        $_SESSION['user_id'] = $row['id'];
         $_SESSION['username'] = $row['username'];
         $_SESSION['name'] = $row['name']; // store the name for homepage
-        header("Location: homepage.php");
-        exit();
+        $_SESSION['email'] = $row['email']; // store email for admin role check
+        
+        /**
+         * Admin Role Assignment
+         * Automatically assigns admin role if user email matches APP_ADMIN_EMAIL from config
+         */
+        if (isset($_SESSION['email']) && defined('APP_ADMIN_EMAIL') && $_SESSION['email'] === APP_ADMIN_EMAIL) {
+            $_SESSION['role'] = 'admin';
+            // Redirect admin users to admin panel
+            header("Location: views/admin.php");
+            exit();
+        } else {
+            $_SESSION['role'] = 'user'; // Default role for regular users
+            header("Location: homepage.php");
+            exit();
+        }
     } else {
         echo "<script>alert('Invalid username or password');</script>";
     }
