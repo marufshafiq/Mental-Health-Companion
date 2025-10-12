@@ -256,7 +256,7 @@ class ProfileController {
 
             // Count mood logs
             try {
-                $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM mood_logs WHERE user_id = ?");
+                $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM mood_entries WHERE user_id = ?");
                 $stmt->execute([$userId]);
                 $counts['mood_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'] ?? 0;
             } catch (PDOException $e) {
@@ -283,7 +283,7 @@ class ProfileController {
             }
 
             // Count mood logs
-            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM mood_logs WHERE user_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM mood_entries WHERE user_id = ?");
             if ($stmt) {
                 $stmt->bind_param("i", $userId);
                 $stmt->execute();
