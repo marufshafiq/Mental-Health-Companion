@@ -323,9 +323,9 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
                     <span class="nav-icon">😊</span>
                     <span class="nav-text">Mood Tracker</span>
                 </a>
-                <a href="chat.php" class="active" data-tooltip="AI Chatbot">
+                <a href="chat.php" class="active" data-tooltip="Chatbot">
                     <span class="nav-icon">💬</span>
-                    <span class="nav-text">AI Chatbot</span>
+                    <span class="nav-text">Chatbot</span>
                 </a>
                 <a href="meditation.php" data-tooltip="Meditation & Resources">
                     <span class="nav-icon">🧘‍♀️</span>
