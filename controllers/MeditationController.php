@@ -12,7 +12,7 @@ require_once __DIR__ . '/../app/models/Resource.php';
  * algorithm to ensure the same tip appears all day long.
  * 
  * @package MentalHealthCompanion
- * @author GitHub Copilot
+ * @author Iftiaq Hossen
  */
 class MeditationController {
     private $resourceModel;

@@ -6,7 +6,7 @@
  * Processes profile edit form submissions
  * 
  * @package MentalHealthCompanion
- * @author GitHub Copilot
+ * @author Iftiaq Hossen
  */
 
 // Start session

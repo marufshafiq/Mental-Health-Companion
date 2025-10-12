@@ -1,9 +1,6 @@
 -- File: database/04_create_consultants_and_demo_requests.sql
 
--- ===================================================
 -- Feature 6: User Profile - Consultants & Demo Requests
--- Creates tables for consultant listing and demo booking
--- ===================================================
 
 -- Create consultants table
 CREATE TABLE IF NOT EXISTS `consultants` (

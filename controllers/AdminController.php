@@ -139,9 +139,9 @@ class AdminController {
     private function getActiveUsers() {
         // This query combines users who have journal or mood entries in last 30 days
         $sql = "SELECT COUNT(DISTINCT user_id) as count FROM (
-                    SELECT DISTINCT user_id FROM journals WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    SELECT DISTINCT user_id FROM journal_entries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                     UNION
-                    SELECT DISTINCT user_id FROM moods WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    SELECT DISTINCT user_id FROM mood_entries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 ) as active_users";
         
         try {
@@ -158,7 +158,7 @@ class AdminController {
      * @return int Total journal count
      */
     private function getTotalJournals() {
-        $sql = "SELECT COUNT(*) as count FROM journals";
+        $sql = "SELECT COUNT(*) as count FROM journal_entries";
         try {
             return $this->executeCountQuery($sql);
         } catch (Exception $e) {
@@ -172,7 +172,7 @@ class AdminController {
      * @return int Total mood count
      */
     private function getTotalMoods() {
-        $sql = "SELECT COUNT(*) as count FROM moods";
+        $sql = "SELECT COUNT(*) as count FROM mood_entries";
         try {
             return $this->executeCountQuery($sql);
         } catch (Exception $e) {

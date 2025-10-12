@@ -6,7 +6,7 @@
  * Handles user profile viewing, editing, and consultant demo requests
  * 
  * @package MentalHealthCompanion
- * @author GitHub Copilot
+ * @author Iftiaq Hossen
  */
 class ProfileController {
     private $db;

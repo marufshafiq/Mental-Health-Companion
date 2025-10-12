@@ -6,7 +6,7 @@
  * Requires admin authentication.
  * 
  * @package MentalHealthCompanion
- * @author Maruf
+ * @author Iftiaq Hossen
  */
 
 // Start session

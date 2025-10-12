@@ -10,7 +10,7 @@ require_once __DIR__ . '/../app/models/Resource.php';
  * Admin-only access control via session-based authentication
  * 
  * @package MentalHealthCompanion
- * @author Maruf
+ * @author Iftiaq Hossen
  */
 class ResourceController {
     private $resourceModel;

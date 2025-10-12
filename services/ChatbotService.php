@@ -57,7 +57,7 @@ class ChatbotService {
                         'content' => $message
                     ]
                 ],
-                'max_tokens' => 500,
+                'max_tokens' => 1024,
                 'temperature' => 0.6
             ];
 

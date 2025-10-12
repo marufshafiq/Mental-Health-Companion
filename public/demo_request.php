@@ -6,7 +6,7 @@
  * Handles consultation demo booking requests
  * 
  * @package MentalHealthCompanion
- * @author GitHub Copilot
+ * @author Iftiaq Hossen
  */
 
 // Start session

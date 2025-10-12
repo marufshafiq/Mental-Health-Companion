@@ -7,7 +7,7 @@
  * Uses Singleton DB connector pattern
  * 
  * @package MentalHealthCompanion
- * @author Maruf
+ * @author Iftiaq Hossen
  */
 class Resource {
     private $db;
