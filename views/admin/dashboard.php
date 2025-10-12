@@ -279,10 +279,6 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
                         <i class="fas fa-chart-line"></i>
                         View User Dashboard
                     </a>
-                    <a href="../chat.php" class="action-btn">
-                        <i class="fas fa-robot"></i>
-                        Test Chatbot
-                    </a>
                 </div>
             </div>
 
