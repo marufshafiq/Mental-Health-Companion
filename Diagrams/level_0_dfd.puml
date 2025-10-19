@@ -1,0 +1,63 @@
+@startuml Level 0 DFD - Mental Health Companion System
+
+' Apply monochrome theme for academic/professional appearance
+skinparam monochrome true
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+' Title
+title Level 0 DFD - Mental Health Companion System\n7 Main Subprocesses
+
+' External Entities (rectangles)
+rectangle "USER" as USER
+rectangle "ADMIN" as ADMIN
+rectangle "EXTERNAL API\n(OpenRouter AI)" as API
+
+' Processes (circles)
+circle "1.0\n\nAuthentication\nManagement" as AUTH
+circle "2.0\n\nMood\nTracking" as MOOD
+circle "3.0\n\nJournal\nManagement" as JOURNAL
+circle "4.0\n\nAI Chatbot\nService" as CHATBOT
+circle "5.0\n\nMeditation &\nResources" as MEDITATION
+circle "6.0\n\nProfile\nManagement" as PROFILE
+circle "7.0\n\nAdmin\nPanel" as ADMINPANEL
+
+' Data Flows from USER
+USER --> AUTH : Login/Signup\nCredentials
+USER --> MOOD : Mood Selection,\nNotes
+USER --> JOURNAL : Journal Entry\n(Title, Content)
+USER --> CHATBOT : Chat Messages
+USER --> MEDITATION : View Resources\nRequest
+USER --> PROFILE : Profile Updates,\nPassword Changes,\nDemo Requests
+
+' Data Flows to USER
+AUTH --> USER : Session Token,\nUser Info
+MOOD --> USER : Mood Analysis,\nSuggestions,\nCharts
+JOURNAL --> USER : Journal Entries,\nSentiment Reports,\nStatistics
+CHATBOT --> USER : Chatbot\nResponses
+MEDITATION --> USER : Tips &\nResources
+PROFILE --> USER : Profile Data,\nUpdate Status
+
+' Authentication flows to other processes (dashed lines)
+AUTH ..> MOOD : Authenticated\nSession
+AUTH ..> JOURNAL : Authenticated\nSession
+AUTH ..> CHATBOT : Authenticated\nSession
+AUTH ..> MEDITATION : Authenticated\nSession
+AUTH ..> PROFILE : Authenticated\nSession
+
+' Chatbot to External API
+CHATBOT --> API : User Message\n& Context
+API --> CHATBOT : AI Response
+
+' Admin flows
+ADMIN --> ADMINPANEL : Analytics\nRequests
+ADMINPANEL --> ADMIN : System\nStatistics
+ADMIN --> MEDITATION : Resource\nManagement
+MEDITATION --> ADMIN : Management\nStatus
+
+' Layout hints
+AUTH -[hidden]-> MOOD
+MOOD -[hidden]-> JOURNAL
+JOURNAL -[hidden]-> CHATBOT
+
+@enduml

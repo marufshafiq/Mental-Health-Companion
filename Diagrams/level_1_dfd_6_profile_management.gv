@@ -1,0 +1,70 @@
+digraph level_1_profile_management {
+    // Graph settings for clean, academic appearance
+    graph [rankdir=LR, splines=ortho, nodesep=0.7, ranksep=1.1, bgcolor=white];
+    node [fontname="Arial", fontsize=10];
+    edge [fontname="Arial", fontsize=9];
+    
+    // Title
+    labelloc="t";
+    label="Level 1 DFD - 6.0 Profile Management\n\n";
+    
+    // External Entity
+    USER [label="USER", shape=box, style="bold", penwidth=2];
+    
+    // Processes
+    P61 [label="6.1\n\nGet Profile\nData", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P62 [label="6.2\n\nGet User\nStatistics", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P63 [label="6.3\n\nUpdate\nProfile", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P64 [label="6.4\n\nChange\nPassword", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P65 [label="6.5\n\nDemo\nRequest", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    
+    // Data Stores
+    D1 [label="D1: users", shape=cylinder, style="bold", penwidth=2];
+    D2 [label="D2: mood_entries", shape=cylinder, style="bold", penwidth=2];
+    D3 [label="D3: journal_entries", shape=cylinder, style="bold", penwidth=2];
+    D4 [label="D4: messages", shape=cylinder, style="bold", penwidth=2];
+    D7 [label="D7: consultants", shape=cylinder, style="bold", penwidth=2];
+    D8 [label="D8: demo_requests", shape=cylinder, style="bold", penwidth=2];
+    
+    // Data Flows - Get Profile Data
+    USER -> P61 [label="  Profile\n  Request"];
+    P61 -> D1 [label="  Query User"];
+    D1 -> P61 [label="  User Data"];
+    P61 -> D7 [label="  Query\n  Consultants"];
+    D7 -> P61 [label="  Consultant\n  List"];
+    P61 -> USER [label="  Profile Info,\n  Consultants"];
+    
+    // Data Flows - Get Statistics
+    USER -> P62 [label="  Statistics\n  Request"];
+    P62 -> D2 [label="  Count Moods"];
+    D2 -> P62 [label="  Mood Count"];
+    P62 -> D3 [label="  Count Journals"];
+    D3 -> P62 [label="  Journal Count"];
+    P62 -> D4 [label="  Count Messages"];
+    D4 -> P62 [label="  Message Count"];
+    P62 -> USER [label="  Activity\n  Statistics"];
+    
+    // Data Flows - Update Profile
+    USER -> P63 [label="  Updated Info,\n  Profile Image"];
+    P63 -> D1 [label="  Update User"];
+    D1 -> P63 [label="  Success"];
+    P63 -> USER [label="  Update\n  Confirmed"];
+    
+    // Data Flows - Change Password
+    USER -> P64 [label="  Current Password,\n  New Password"];
+    P64 -> D1 [label="  Verify &\n  Update Password"];
+    D1 -> P64 [label="  Success"];
+    P64 -> USER [label="  Password\n  Changed"];
+    
+    // Data Flows - Demo Request
+    USER -> P65 [label="  Consultant ID,\n  Preferred Time"];
+    P65 -> D8 [label="  Insert Demo\n  Request"];
+    D8 -> P65 [label="  Request ID"];
+    P65 -> USER [label="  Booking\n  Confirmed"];
+    
+    // Layout arrangement
+    {rank=same; P61; P62;}
+    {rank=same; P63; P64; P65;}
+    {rank=same; D1; D2; D3; D4;}
+    {rank=same; D7; D8;}
+}

@@ -1,0 +1,261 @@
+---
+title: Mental Health Companion System - Class Diagram
+---
+
+classDiagram
+    direction LR
+    
+    %% ============================================
+    %% MODEL CLASSES
+    %% ============================================
+    
+    class Message {
+        -db : PDO|mysqli
+        +__construct()
+        +getConnection() PDO|mysqli
+        +create(data: array) int|bool
+        +getByConversationId(conversationId: string) array
+        +update(id: int, data: array) bool
+        +delete(id: int) bool
+    }
+
+    class Resource {
+        -db : PDO|mysqli
+        +__construct()
+        +getDatabaseConnection() PDO|mysqli
+        +create(data: array) int
+        +update(id: int, data: array) bool
+        +find(id: int) array|null
+        +all(limit: int) array
+        +delete(id: int) bool
+    }
+
+    %% ============================================
+    %% CONTROLLER CLASSES
+    %% ============================================
+    
+    class JournalController {
+        -userId : int
+        -db : PDO
+        +__construct(userId: int)
+        -getConnection() PDO
+        +getEntries(limit: int, type: string) array
+        +getEntry(entryId: int) array|null
+        +addEntry(...) int|bool
+        +updateEntry(...) bool
+        +deleteEntry(entryId: int) bool
+        +toggleFavorite(entryId: int) bool
+    }
+
+    class ChatController {
+        -userId : int|null
+        -messageModel : Message
+        +__construct()
+        -getAuthenticatedUserId() int|null
+        +handlePost() array
+        -generateConversationId() string
+    }
+
+    class ProfileController {
+        -db : PDO|mysqli
+        -userId : int|null
+        +__construct()
+        -getDatabaseConnection() PDO|mysqli
+        -getAuthenticatedUserId() int|null
+        -requireAuth() void
+        +show() void
+        +edit() void
+        +update() void
+        +getUserData(userId: int) array|null
+        +getUserStats(userId: int) array
+        +getConsultants() array
+    }
+
+    class AdminController {
+        -db : PDO|mysqli
+        -userId : int|null
+        -isAdmin : bool
+        +__construct()
+        -getDatabaseConnection() PDO|mysqli
+        -getAuthenticatedUserId() int|null
+        -checkAdminRole() bool
+        -requireAdmin() void
+        +index() void
+        -getTotalUsers() int
+        -getActiveUsers() int
+        -getTotalJournals() int
+        -getTotalMoods() int
+        -getTotalMessages() int
+        -getTotalResources() int
+    }
+
+    class MeditationController {
+        -resourceModel : Resource
+        -db : PDO|mysqli
+        +__construct()
+        -getDatabaseConnection() PDO|mysqli
+        +index() void
+        -getTipOfTheDay() string
+        -getTipOfTheDayPDO() string
+        -getTipOfTheDayMySQLi() string
+    }
+
+    class ResourceController {
+        -resourceModel : Resource
+        +__construct()
+        -requireAdmin() void
+        +index() void
+        +create() void
+        +store() void
+        +edit(id: int) void
+        +update(id: int) void
+        +delete(id: int) void
+    }
+
+    %% ============================================
+    %% SERVICE CLASSES - FACTORY PATTERN
+    %% ============================================
+    
+    class Journal {
+        <<abstract>>
+        #title : string
+        #content : string
+        #type : string
+        #prompts : array
+        +__construct(title: string, content: string)
+        +getPrompts()* array
+        +getIcon()* string
+        +getColor()* string
+        +getDefaultTitle()* string
+        +getTitle() string
+        +getContent() string
+        +getType() string
+    }
+
+    class DailyJournal {
+        +getPrompts() array
+        +getIcon() string
+        +getColor() string
+        +getDefaultTitle() string
+    }
+
+    class GratitudeJournal {
+        +getPrompts() array
+        +getIcon() string
+        +getColor() string
+        +getDefaultTitle() string
+    }
+
+    class GoalJournal {
+        +getPrompts() array
+        +getIcon() string
+        +getColor() string
+        +getDefaultTitle() string
+    }
+
+    class JournalFactory {
+        <<factory>>
+        +create(type: string, title: string, content: string)$ Journal
+    }
+
+    %% ============================================
+    %% SERVICE CLASSES - STRATEGY PATTERN
+    %% ============================================
+    
+    class MoodAnalysisStrategy {
+        <<interface>>
+        +analyze(moodEntries: array)* array
+    }
+
+    class TrendAnalysisStrategy {
+        +analyze(moodEntries: array) array
+        -calculateTrend(entries: array) string
+    }
+
+    class EmotionalPatternStrategy {
+        +analyze(moodEntries: array) array
+        -identifyPattern(entries: array) array
+    }
+
+    class WeeklySummaryStrategy {
+        +analyze(moodEntries: array) array
+        -groupByWeek(entries: array) array
+    }
+
+    %% ============================================
+    %% SERVICE CLASSES - STATIC SERVICES
+    %% ============================================
+    
+    class MoodSuggestionService {
+        <<service>>
+        -suggestions$ : array
+        +getSuggestions(mood: string)$ array
+        +getAllMoods()$ array
+        -getDefaultSuggestions()$ array
+    }
+
+    class SentimentAnalysisService {
+        <<service>>
+        -positiveWords$ : array
+        -negativeWords$ : array
+        +analyze(content: string)$ array
+        -tokenize(text: string)$ array
+        -countWords(tokens: array, wordList: array)$ int
+        -calculateSentiment(positive: int, negative: int)$ float
+        -determineMood(sentiment: float)$ array
+        +getTrend(entries: array)$ array
+        +getAverageSentiment(entries: array)$ float
+    }
+
+    class ChatbotService {
+        <<service>>
+        -API_KEY$ : string
+        -API_URL$ : string
+        -MODEL$ : string
+        +getResponse(message: string, conversationId: string)$ string
+        -getConversationHistory(conversationId: string)$ array
+        -callOpenRouterAPI(messages: array)$ string|null
+        -getFallbackResponse(message: string)$ string
+    }
+
+    %% ============================================
+    %% RELATIONSHIPS - FACTORY PATTERN
+    %% ============================================
+    
+    Journal <|-- DailyJournal : extends
+    Journal <|-- GratitudeJournal : extends
+    Journal <|-- GoalJournal : extends
+    JournalFactory ..> Journal : creates
+    JournalFactory ..> DailyJournal : creates
+    JournalFactory ..> GratitudeJournal : creates
+    JournalFactory ..> GoalJournal : creates
+
+    %% ============================================
+    %% RELATIONSHIPS - STRATEGY PATTERN
+    %% ============================================
+    
+    MoodAnalysisStrategy <|.. TrendAnalysisStrategy : implements
+    MoodAnalysisStrategy <|.. EmotionalPatternStrategy : implements
+    MoodAnalysisStrategy <|.. WeeklySummaryStrategy : implements
+
+    %% ============================================
+    %% RELATIONSHIPS - CONTROLLER DEPENDENCIES
+    %% ============================================
+    
+    ChatController --> Message : uses
+    ChatController ..> ChatbotService : uses
+    
+    JournalController ..> JournalFactory : uses
+    JournalController ..> SentimentAnalysisService : uses
+    
+    MeditationController --> Resource : uses
+    ResourceController --> Resource : uses
+
+    %% ============================================
+    %% NOTES
+    %% ============================================
+    
+    note for Journal "Factory Pattern: Abstract base class for different journal types"
+    note for MoodAnalysisStrategy "Strategy Pattern: Interface for different mood analysis algorithms"
+    note for ChatbotService "Static Service: Connects to OpenRouter AI with fallback responses"
+    note for SentimentAnalysisService "Static Service: Analyzes journal content sentiment using keywords"

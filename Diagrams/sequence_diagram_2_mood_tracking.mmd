@@ -1,0 +1,89 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 2.0 Mood Tracking
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant UI as User Interface
+    participant API as API Layer
+    participant MAS as Mood Analysis Strategy
+    participant MSS as Mood Suggestion Service
+    participant DB as Database (D2)
+    
+    Note over U,DB: 2.1 Record Mood Entry
+    
+    U->>UI: Select Mood Type & Value (1-5)
+    activate UI
+    U->>UI: Add Optional Notes
+    UI->>API: POST /api/mood_record.php
+    activate API
+    API->>DB: Insert Mood Entry Record
+    activate DB
+    DB-->>API: Return Mood Entry ID
+    deactivate DB
+    API-->>UI: Return Success Response
+    UI-->>U: Show Confirmation Message
+    deactivate API
+    deactivate UI
+    
+    Note over U,DB: 2.2 Mood Analysis (Strategy Pattern)
+    
+    U->>UI: Request Mood Analysis
+    activate UI
+    UI->>API: GET /api/mood_analysis.php
+    activate API
+    API->>DB: Query User's Mood History
+    activate DB
+    DB-->>API: Return Mood Entries
+    deactivate DB
+    
+    API->>MAS: Execute Analysis Strategies
+    activate MAS
+    MAS->>MAS: Apply Trend Analysis Strategy
+    MAS->>MAS: Apply Pattern Analysis Strategy
+    MAS->>MAS: Apply Weekly Summary Strategy
+    MAS-->>API: Return Analysis Results
+    deactivate MAS
+    
+    API-->>UI: Return Mood Analysis Data
+    UI-->>U: Display Charts & Insights
+    deactivate API
+    deactivate UI
+    
+    Note over U,DB: 2.3 Mood Suggestions
+    
+    U->>UI: View Mood Suggestions
+    activate UI
+    UI->>API: GET /api/mood_suggestions.php
+    activate API
+    API->>DB: Get Current Mood State
+    activate DB
+    DB-->>API: Return Latest Mood Entry
+    deactivate DB
+    
+    API->>MSS: Generate Suggestions
+    activate MSS
+    MSS->>MSS: Analyze Mood Level
+    MSS->>MSS: Select Appropriate Tips
+    MSS-->>API: Return Suggestion List
+    deactivate MSS
+    
+    API-->>UI: Return Suggestions
+    UI-->>U: Display Personalized Tips
+    deactivate API
+    deactivate UI
+    
+    Note over U,DB: 2.4 Mood History
+    
+    U->>UI: Request Mood History
+    activate UI
+    UI->>API: GET /api/mood_history.php
+    activate API
+    API->>DB: Query All User Mood Entries
+    activate DB
+    DB-->>API: Return Mood History Data
+    deactivate DB
+    API-->>UI: Return Formatted History
+    UI-->>U: Display Mood Timeline & Charts
+    deactivate API
+    deactivate UI

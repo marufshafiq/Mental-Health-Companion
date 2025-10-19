@@ -1,0 +1,138 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 3.0 Journal Management
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant UI as User Interface
+    participant JC as Journal Controller
+    participant JF as Journal Factory
+    participant SAS as Sentiment Analysis Service
+    participant DB as Database (D3)
+    
+    Note over U,DB: 3.1 Sentiment Analysis
+    
+    U->>UI: Enter Journal Content
+    activate UI
+    UI->>JC: Request Sentiment Analysis
+    activate JC
+    JC->>SAS: Analyze Text Content
+    activate SAS
+    SAS->>SAS: Calculate Sentiment Score
+    SAS->>SAS: Determine Positive/Negative/Neutral
+    SAS-->>JC: Return Sentiment Result
+    deactivate SAS
+    JC-->>UI: Return Sentiment Data
+    UI-->>U: Display Sentiment Indicator
+    deactivate JC
+    deactivate UI
+    
+    Note over U,DB: 3.2 Create Journal Entry (Factory Pattern)
+    
+    U->>UI: Enter Title & Content
+    activate UI
+    U->>UI: Select Journal Type
+    UI->>JC: POST /api/journal_create.php
+    activate JC
+    JC->>JF: Create Journal Instance
+    activate JF
+    
+    alt Daily Journal
+        JF->>JF: Create DailyJournal Object
+    else Gratitude Journal
+        JF->>JF: Create GratitudeJournal Object
+    else Goal Journal
+        JF->>JF: Create GoalJournal Object
+    end
+    
+    JF-->>JC: Return Journal Instance
+    deactivate JF
+    
+    JC->>SAS: Analyze Sentiment
+    activate SAS
+    SAS-->>JC: Return Sentiment Score
+    deactivate SAS
+    
+    JC->>DB: Insert Journal Entry
+    activate DB
+    DB-->>JC: Return Entry ID
+    deactivate DB
+    
+    JC-->>UI: Return Success Response
+    UI-->>U: Show Entry Created Confirmation
+    deactivate JC
+    deactivate UI
+    
+    Note over U,DB: 3.3 Update Journal Entry
+    
+    U->>UI: Select Entry to Edit
+    activate UI
+    U->>UI: Modify Content
+    UI->>JC: PUT /api/journal_update.php
+    activate JC
+    JC->>SAS: Re-analyze Sentiment
+    activate SAS
+    SAS-->>JC: Return New Sentiment Score
+    deactivate SAS
+    
+    JC->>DB: Update Entry Record
+    activate DB
+    DB-->>JC: Confirm Update
+    deactivate DB
+    
+    JC-->>UI: Return Success Response
+    UI-->>U: Show Update Confirmation
+    deactivate JC
+    deactivate UI
+    
+    Note over U,DB: 3.4 Delete Journal Entry
+    
+    U->>UI: Select Entry to Delete
+    activate UI
+    U->>UI: Confirm Deletion
+    UI->>JC: DELETE /api/journal_delete.php
+    activate JC
+    JC->>DB: Delete Entry by ID
+    activate DB
+    DB-->>JC: Confirm Deletion
+    deactivate DB
+    JC-->>UI: Return Success Response
+    UI-->>U: Show Deletion Confirmation
+    deactivate JC
+    deactivate UI
+    
+    Note over U,DB: 3.5 Toggle Favorite
+    
+    U->>UI: Click Favorite Icon
+    activate UI
+    UI->>JC: POST /api/journal_favorite.php
+    activate JC
+    JC->>DB: Toggle is_favorite Field
+    activate DB
+    DB-->>JC: Confirm Toggle
+    deactivate DB
+    JC-->>UI: Return New Favorite Status
+    UI-->>U: Update Favorite Icon
+    deactivate JC
+    deactivate UI
+    
+    Note over U,DB: 3.6 Journal Statistics
+    
+    U->>UI: View Journal Statistics
+    activate UI
+    UI->>JC: GET /api/journal_stats.php
+    activate JC
+    JC->>DB: Query Entry Count
+    activate DB
+    DB-->>JC: Return Total Entries
+    JC->>DB: Query Word Count
+    DB-->>JC: Return Total Words
+    JC->>DB: Query Sentiment Distribution
+    DB-->>JC: Return Sentiment Stats
+    deactivate DB
+    
+    JC->>JC: Calculate Statistics
+    JC-->>UI: Return Stats Data
+    UI-->>U: Display Charts & Numbers
+    deactivate JC
+    deactivate UI

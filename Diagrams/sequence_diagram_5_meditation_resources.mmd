@@ -1,0 +1,103 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 5.0 Meditation & Resources
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant A as Admin
+    participant UI as User Interface
+    participant MC as Meditation Controller
+    participant RC as Resource Controller
+    participant DB_Tips as Database (D5 - Tips)
+    participant DB_Res as Database (D6 - Resources)
+    
+    Note over U,DB_Res: 5.1 Daily Tip-of-Day (Deterministic Algorithm)
+    
+    U->>UI: Access Meditation Page
+    activate UI
+    UI->>MC: GET /meditation.php
+    activate MC
+    MC->>MC: Calculate Tip Index<br/>(Day of Year % Total Tips)
+    MC->>DB_Tips: Query Tip by Index
+    activate DB_Tips
+    DB_Tips-->>MC: Return Daily Tip
+    deactivate DB_Tips
+    MC-->>UI: Return Tip Data
+    UI-->>U: Display Daily Tip
+    deactivate MC
+    deactivate UI
+    
+    Note over U,DB_Res: 5.2 Fetch Resources (User View)
+    
+    U->>UI: View Resources List
+    activate UI
+    UI->>RC: GET /views/resources/resource.php
+    activate RC
+    RC->>DB_Res: Query All Active Resources
+    activate DB_Res
+    DB_Res-->>RC: Return Resource List
+    deactivate DB_Res
+    RC-->>UI: Return Resources Data
+    UI-->>U: Display Resources (Title, URL, Description)
+    deactivate RC
+    deactivate UI
+    
+    Note over A,DB_Res: 5.3 Create Resource (Admin Only)
+    
+    A->>UI: Access Admin Panel
+    activate UI
+    A->>UI: Click Add Resource
+    A->>UI: Enter Resource Details
+    UI->>RC: POST /views/resources/store.php
+    activate RC
+    RC->>RC: Validate Input Data
+    RC->>DB_Res: Insert New Resource
+    activate DB_Res
+    DB_Res-->>RC: Return Resource ID
+    deactivate DB_Res
+    RC-->>UI: Return Success Response
+    UI-->>A: Show Creation Confirmation
+    deactivate RC
+    deactivate UI
+    
+    Note over A,DB_Res: 5.4 Update Resource (Admin Only)
+    
+    A->>UI: Select Resource to Edit
+    activate UI
+    UI->>RC: GET /views/resources/edit.php
+    activate RC
+    RC->>DB_Res: Query Resource by ID
+    activate DB_Res
+    DB_Res-->>RC: Return Resource Data
+    deactivate DB_Res
+    RC-->>UI: Return Resource Details
+    UI-->>A: Display Edit Form
+    
+    A->>UI: Modify Resource Data
+    A->>UI: Submit Changes
+    UI->>RC: POST /views/resources/update.php
+    RC->>RC: Validate Updated Data
+    RC->>DB_Res: Update Resource Record
+    activate DB_Res
+    DB_Res-->>RC: Confirm Update
+    deactivate DB_Res
+    RC-->>UI: Return Success Response
+    UI-->>A: Show Update Confirmation
+    deactivate RC
+    deactivate UI
+    
+    Note over A,DB_Res: 5.4 Delete Resource (Admin Only)
+    
+    A->>UI: Select Resource to Delete
+    activate UI
+    A->>UI: Confirm Deletion
+    UI->>RC: POST /views/resources/delete.php
+    activate RC
+    RC->>DB_Res: Delete Resource by ID
+    activate DB_Res
+    DB_Res-->>RC: Confirm Deletion
+    deactivate DB_Res
+    RC-->>UI: Return Success Response
+    UI-->>A: Show Deletion Confirmation
+    deactivate RC
+    deactivate UI

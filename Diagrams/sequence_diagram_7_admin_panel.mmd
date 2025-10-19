@@ -1,0 +1,104 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 7.0 Admin Panel
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant A as Admin
+    participant UI as Admin Interface
+    participant AC as Admin Controller
+    participant DB_Users as Database (D1 - Users)
+    participant DB_Mood as Database (D2 - Mood)
+    participant DB_Journal as Database (D3 - Journal)
+    participant DB_Messages as Database (D4 - Messages)
+    participant DB_Resources as Database (D6 - Resources)
+    
+    Note over A,DB_Resources: 7.1 Generate System Analytics
+    
+    A->>UI: Access Admin Panel
+    activate UI
+    UI->>AC: Verify Admin Role
+    activate AC
+    AC->>DB_Users: Check User Role
+    activate DB_Users
+    DB_Users-->>AC: Return User Role
+    deactivate DB_Users
+    
+    alt Is Admin
+        AC-->>UI: Grant Access
+        UI-->>A: Display Admin Dashboard
+    else Not Admin
+        AC-->>UI: Deny Access
+        UI-->>A: Redirect to Home
+        Note over A,UI: Access Denied
+    end
+    deactivate AC
+    
+    A->>UI: View System Analytics
+    activate AC
+    UI->>AC: GET /views/admin/dashboard.php
+    
+    Note over AC,DB_Resources: Query All Databases for Statistics
+    
+    AC->>DB_Users: COUNT(*) Total Users
+    activate DB_Users
+    DB_Users-->>AC: Return Total User Count
+    deactivate DB_Users
+    
+    AC->>DB_Users: COUNT(*) WHERE last_login > NOW() - 30 days
+    activate DB_Users
+    DB_Users-->>AC: Return Active User Count
+    deactivate DB_Users
+    
+    AC->>DB_Mood: COUNT(*) Total Mood Entries
+    activate DB_Mood
+    DB_Mood-->>AC: Return Mood Entry Count
+    deactivate DB_Mood
+    
+    AC->>DB_Journal: COUNT(*) Total Journal Entries
+    activate DB_Journal
+    DB_Journal-->>AC: Return Journal Entry Count
+    deactivate DB_Journal
+    
+    AC->>DB_Messages: COUNT(*) Total Chat Messages
+    activate DB_Messages
+    DB_Messages-->>AC: Return Message Count
+    deactivate DB_Messages
+    
+    AC->>DB_Resources: COUNT(*) Total Resources
+    activate DB_Resources
+    DB_Resources-->>AC: Return Resource Count
+    deactivate DB_Resources
+    
+    AC->>DB_Users: Query Recent Registrations
+    activate DB_Users
+    DB_Users-->>AC: Return Recent User List
+    deactivate DB_Users
+    
+    AC->>AC: Aggregate Analytics Data
+    AC->>AC: Calculate Growth Rates
+    AC->>AC: Generate Summary Reports
+    
+    AC-->>UI: Return Complete Analytics
+    UI-->>A: Display Analytics Dashboard<br/>(Charts, Tables, Statistics)
+    deactivate AC
+    deactivate UI
+    
+    Note over A,DB_Resources: Resource Management (via 5.0 Meditation & Resources)
+    
+    A->>UI: Manage Resources
+    activate UI
+    Note over UI: Admin uses Resource Management<br/>from Process 5.0 (Meditation & Resources)
+    UI-->>A: See Sequence Diagram 5.0<br/>for Resource CRUD Operations
+    deactivate UI
+    
+    Note over A,UI: Admin Logout
+    
+    A->>UI: Click Logout
+    activate UI
+    UI->>AC: POST /logout
+    activate AC
+    AC->>AC: Destroy Admin Session
+    AC-->>UI: Confirm Logout
+    UI-->>A: Redirect to Login Page
+    deactivate AC
+    deactivate UI
