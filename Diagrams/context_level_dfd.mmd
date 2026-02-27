@@ -1,0 +1,36 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#fff','primaryTextColor':'#000','primaryBorderColor':'#000','lineColor':'#000','secondaryColor':'#fff','tertiaryColor':'#fff'}}}%%
+flowchart LR
+    %% Context Level DFD - Mental Health Companion System
+    %% Simple, Professional & Academic Design
+    %% Left-to-Right Layout
+    
+    %% External Entities
+    USER[["USER"]]
+    ADMIN[["ADMIN"]]
+    API[["EXTERNAL API<br/>(OpenRouter AI)"]]
+    
+    %% Main Process (Circle notation for process)
+    SYSTEM(("0<br/><br/>Mental Health<br/>Companion<br/>System"))
+    
+    %% Data Flows - USER to SYSTEM
+    USER -->|"User Credentials,<br/>Mood Data,<br/>Journal Entries,<br/>Chat Messages,<br/>Profile Updates,<br/>Password Changes,<br/>Demo Requests"| SYSTEM
+    
+    %% Data Flows - SYSTEM to USER
+    SYSTEM -->|"Authentication Status,<br/>Mood Analysis & Suggestions,<br/>Journal Insights & Sentiment,<br/>AI Chatbot Responses,<br/>Meditation Resources & Tips,<br/>Profile Information,<br/>Dashboard Analytics"| USER
+    
+    %% Data Flows - ADMIN to SYSTEM
+    ADMIN -->|"Resource Management<br/>Requests,<br/>System Analytics<br/>Requests"| SYSTEM
+    
+    %% Data Flows - SYSTEM to ADMIN
+    SYSTEM -->|"System Analytics,<br/>User Statistics,<br/>Resource<br/>Management Status"| ADMIN
+    
+    %% Data Flows - SYSTEM to/from EXTERNAL API
+    SYSTEM -->|"User Messages<br/>& Context"| API
+    API -->|"AI-Generated<br/>Responses"| SYSTEM
+    
+    %% Styling for academic appearance
+    classDef entityStyle fill:#fff,stroke:#000,stroke-width:2px,color:#000
+    classDef processStyle fill:#fff,stroke:#000,stroke-width:3px,color:#000
+    
+    class USER,ADMIN,API entityStyle
+    class SYSTEM processStyle

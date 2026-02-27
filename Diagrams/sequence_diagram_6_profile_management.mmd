@@ -1,0 +1,157 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 6.0 Profile Management
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant UI as User Interface
+    participant PC as Profile Controller
+    participant DB_Users as Database (D1 - Users)
+    participant DB_Mood as Database (D2 - Mood)
+    participant DB_Journal as Database (D3 - Journal)
+    participant DB_Messages as Database (D4 - Messages)
+    participant DB_Consultants as Database (D7 - Consultants)
+    participant DB_Demo as Database (D8 - Demo Requests)
+    
+    Note over U,DB_Demo: 6.1 Get Profile Data
+    
+    U->>UI: Access Profile Page
+    activate UI
+    UI->>PC: GET /views/profile/profile.php
+    activate PC
+    PC->>DB_Users: Query User by ID
+    activate DB_Users
+    DB_Users-->>PC: Return User Record
+    deactivate DB_Users
+    PC-->>UI: Return Profile Data
+    UI-->>U: Display Profile Information
+    deactivate PC
+    deactivate UI
+    
+    Note over U,DB_Demo: 6.2 Get User Statistics
+    
+    U->>UI: View Profile Statistics
+    activate UI
+    UI->>PC: GET Profile Stats
+    activate PC
+    
+    PC->>DB_Journal: Count User Journals
+    activate DB_Journal
+    DB_Journal-->>PC: Return Journal Count
+    deactivate DB_Journal
+    
+    PC->>DB_Mood: Count User Moods
+    activate DB_Mood
+    DB_Mood-->>PC: Return Mood Count
+    deactivate DB_Mood
+    
+    PC->>DB_Messages: Count User Messages
+    activate DB_Messages
+    DB_Messages-->>PC: Return Message Count
+    deactivate DB_Messages
+    
+    PC->>PC: Aggregate Statistics
+    PC-->>UI: Return Statistics Data
+    UI-->>U: Display Stats Dashboard
+    deactivate PC
+    deactivate UI
+    
+    Note over U,DB_Demo: 6.3 Update Profile
+    
+    U->>UI: Click Edit Profile
+    activate UI
+    UI->>PC: GET /views/profile/edit.php
+    activate PC
+    PC->>DB_Users: Query Current Profile Data
+    activate DB_Users
+    DB_Users-->>PC: Return Current Data
+    deactivate DB_Users
+    PC-->>UI: Return Edit Form
+    UI-->>U: Display Edit Form
+    
+    U->>UI: Modify Profile Information
+    U->>UI: Upload Profile Image (Optional)
+    U->>UI: Submit Changes
+    UI->>PC: POST /public/profile_update.php
+    PC->>PC: Validate Input Data
+    
+    alt Image Uploaded
+        PC->>PC: Process Image Upload
+        PC->>PC: Save to assets/uploads/profiles/
+    end
+    
+    PC->>DB_Users: Update User Record
+    activate DB_Users
+    DB_Users-->>PC: Confirm Update
+    deactivate DB_Users
+    
+    PC-->>UI: Return Success Response
+    UI-->>U: Show Update Confirmation
+    deactivate PC
+    deactivate UI
+    
+    Note over U,DB_Demo: 6.4 Change Password
+    
+    U->>UI: Access Change Password
+    activate UI
+    UI->>PC: GET /views/profile/change_password.php
+    activate PC
+    PC-->>UI: Return Password Form
+    UI-->>U: Display Password Form
+    
+    U->>UI: Enter Current Password
+    U->>UI: Enter New Password
+    U->>UI: Confirm New Password
+    U->>UI: Submit Password Change
+    UI->>PC: POST /public/change_password.php
+    
+    PC->>DB_Users: Query User Current Password
+    activate DB_Users
+    DB_Users-->>PC: Return Password Hash
+    deactivate DB_Users
+    
+    PC->>PC: Verify Current Password
+    
+    alt Password Valid
+        PC->>PC: Hash New Password
+        PC->>DB_Users: Update Password Hash
+        activate DB_Users
+        DB_Users-->>PC: Confirm Update
+        deactivate DB_Users
+        PC-->>UI: Return Success Response
+        UI-->>U: Show Password Changed Confirmation
+    else Password Invalid
+        PC-->>UI: Return Error Message
+        UI-->>U: Show Error (Invalid Current Password)
+    end
+    deactivate PC
+    deactivate UI
+    
+    Note over U,DB_Demo: 6.5 Demo Request (Consultant Booking)
+    
+    U->>UI: Request Demo/Consultation
+    activate UI
+    UI->>PC: GET Demo Request Form
+    activate PC
+    PC->>DB_Consultants: Query Available Consultants
+    activate DB_Consultants
+    DB_Consultants-->>PC: Return Consultant List
+    deactivate DB_Consultants
+    PC-->>UI: Return Consultants Data
+    UI-->>U: Display Consultant Selection
+    
+    U->>UI: Select Consultant
+    U->>UI: Choose Preferred Time
+    U->>UI: Submit Demo Request
+    UI->>PC: POST /public/demo_request.php
+    
+    PC->>PC: Validate Request Data
+    PC->>DB_Demo: Insert Demo Request
+    activate DB_Demo
+    DB_Demo-->>PC: Return Request ID
+    deactivate DB_Demo
+    
+    PC-->>UI: Return Success Response
+    UI-->>U: Show Booking Confirmation
+    deactivate PC
+    deactivate UI

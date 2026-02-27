@@ -1,0 +1,73 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 1.0 Authentication Management
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant UI as User Interface
+    participant AC as Auth Controller
+    participant DB as Database (D1)
+    
+    Note over U,DB: 1.1 Login Process
+    
+    U->>UI: Enter Login Credentials
+    activate UI
+    UI->>AC: Submit Login Request
+    activate AC
+    AC->>DB: Query User by Email
+    activate DB
+    DB-->>AC: Return User Record
+    deactivate DB
+    
+    alt Valid Credentials
+        AC->>AC: Verify Password Hash
+        AC->>DB: Update Last Login
+        activate DB
+        DB-->>AC: Confirm Update
+        deactivate DB
+        AC-->>UI: Return Session Token + User Info
+        UI-->>U: Display Dashboard
+    else Invalid Credentials
+        AC-->>UI: Return Error Message
+        UI-->>U: Show Login Error
+    end
+    deactivate AC
+    deactivate UI
+    
+    Note over U,DB: 1.2 Signup Process
+    
+    U->>UI: Enter Registration Data
+    activate UI
+    UI->>AC: Submit Signup Request
+    activate AC
+    AC->>DB: Check Email Exists
+    activate DB
+    DB-->>AC: Return Existence Status
+    deactivate DB
+    
+    alt Email Available
+        AC->>AC: Hash Password
+        AC->>DB: Insert New User Record
+        activate DB
+        DB-->>AC: Return User ID
+        deactivate DB
+        AC-->>UI: Return Success + Session Token
+        UI-->>U: Display Welcome Dashboard
+    else Email Already Exists
+        AC-->>UI: Return Error Message
+        UI-->>U: Show Registration Error
+    end
+    deactivate AC
+    deactivate UI
+    
+    Note over U,DB: 1.3 Logout Process
+    
+    U->>UI: Click Logout
+    activate UI
+    UI->>AC: Send Logout Request
+    activate AC
+    AC->>AC: Destroy Session
+    AC-->>UI: Confirm Logout
+    UI-->>U: Redirect to Login Page
+    deactivate AC
+    deactivate UI

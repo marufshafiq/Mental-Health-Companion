@@ -1,0 +1,72 @@
+%% Mental Health Companion System - Sequence Diagram
+%% 4.0 AI Chatbot Service
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant UI as Chat Interface
+    participant CC as Chat Controller
+    participant CS as Chatbot Service
+    participant DB as Database (D4)
+    participant API as OpenRouter AI API
+    
+    Note over U,API: 4.1 Store User Message
+    
+    U->>UI: Type Chat Message
+    activate UI
+    U->>UI: Press Send Button
+    UI->>CC: POST /api/chat.php
+    activate CC
+    CC->>DB: Insert User Message Record
+    activate DB
+    DB-->>CC: Return Message ID
+    deactivate DB
+    CC-->>UI: Acknowledge Message Received
+    deactivate CC
+    deactivate UI
+    
+    Note over U,API: 4.2 Chatbot Service (API Handler)
+    
+    UI->>CC: Request Bot Response
+    activate CC
+    CC->>DB: Fetch Recent Chat History
+    activate DB
+    DB-->>CC: Return Last 10 Messages
+    deactivate DB
+    
+    CC->>CS: Process User Message
+    activate CS
+    CS->>CS: Build Context from History
+    CS->>CS: Format API Request Payload
+    
+    CS->>API: POST Request with Context
+    activate API
+    Note right of API: External API Call<br/>DeepSeek Chat v3.1
+    API->>API: Process with AI Model
+    API-->>CS: Return AI Response JSON
+    deactivate API
+    
+    CS->>CS: Extract Response Text
+    CS-->>CC: Return Bot Message
+    deactivate CS
+    deactivate CC
+    
+    Note over U,API: 4.3 Store Bot Response
+    
+    CC->>DB: Insert Bot Message Record
+    activate CC
+    activate DB
+    DB-->>CC: Return Message ID
+    deactivate DB
+    
+    CC-->>UI: Return Bot Response
+    UI-->>U: Display Bot Message
+    deactivate CC
+    
+    Note over U,API: Continuous Chat Loop
+    
+    U->>UI: Send Another Message
+    activate UI
+    Note over UI: Loop repeats from 4.1
+    UI-->>U: Display Conversation
+    deactivate UI

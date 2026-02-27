@@ -1,0 +1,39 @@
+digraph level_1_ai_chatbot {
+    // Graph settings for clean, academic appearance
+    graph [rankdir=LR, splines=ortho, nodesep=0.8, ranksep=1.2, bgcolor=white];
+    node [fontname="Arial", fontsize=11];
+    edge [fontname="Arial", fontsize=10];
+    
+    // Title
+    labelloc="t";
+    label="Level 1 DFD - 4.0 AI Chatbot Service\n\n";
+    
+    // External Entities
+    USER [label="USER", shape=box, style="bold", penwidth=2];
+    API [label="EXTERNAL API\n(OpenRouter AI)", shape=box, style="bold", penwidth=2];
+    
+    // Processes
+    P41 [label="4.1\n\nStore User\nMessage", shape=circle, width=1.2, height=1.2, style="bold", penwidth=2];
+    P42 [label="4.2\n\nChatbot\nService\n(API Handler)", shape=circle, width=1.3, height=1.3, style="bold", penwidth=2];
+    P43 [label="4.3\n\nStore Bot\nResponse", shape=circle, width=1.2, height=1.2, style="bold", penwidth=2];
+    
+    // Data Store
+    D4 [label="D4: messages", shape=cylinder, style="bold", penwidth=2];
+    
+    // Data Flows
+    USER -> P41 [label="  Chat Message,\n  Conversation ID"];
+    P41 -> D4 [label="  Insert User\n  Message"];
+    D4 -> P41 [label="  Message ID"];
+    P41 -> P42 [label="  Message\n  Stored"];
+    
+    P42 -> API [label="  User Message\n  & Context"];
+    API -> P42 [label="  AI-Generated\n  Response"];
+    
+    P42 -> P43 [label="  Bot Response"];
+    P43 -> D4 [label="  Insert Bot\n  Response"];
+    D4 -> P43 [label="  Message ID"];
+    P43 -> USER [label="  Chat Response,\n  Conversation ID"];
+    
+    // Layout arrangement
+    {rank=same; P41; P42; P43;}
+}

@@ -207,7 +207,7 @@ $name = $_SESSION['name'];
                         <a href="mood.php" class="action-btn">
                             📊 View Mood History
                         </a>
-                        <a href="chatbot.php" class="action-btn">
+                        <a href="views/chat.php" class="action-btn">
                             💬 Talk to Companion
                         </a>
                     </div>

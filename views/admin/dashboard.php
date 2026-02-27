@@ -275,13 +275,9 @@ $name = $_SESSION['name'] ?? $_SESSION['username'];
                         <i class="fas fa-plus"></i>
                         Add Resource
                     </a>
-                    <a href="../../dashboard.php" class="action-btn">
+                    <a href="admin/userdashboard.php" class="action-btn">
                         <i class="fas fa-chart-line"></i>
                         View User Dashboard
-                    </a>
-                    <a href="../chat.php" class="action-btn">
-                        <i class="fas fa-robot"></i>
-                        Test Chatbot
                     </a>
                 </div>
             </div>

@@ -1,0 +1,65 @@
+digraph level_1_journal_management {
+    // Graph settings for clean, academic appearance
+    graph [rankdir=LR, splines=ortho, nodesep=0.7, ranksep=1.1, bgcolor=white];
+    node [fontname="Arial", fontsize=10];
+    edge [fontname="Arial", fontsize=9];
+    
+    // Title
+    labelloc="t";
+    label="Level 1 DFD - 3.0 Journal Management\n\n";
+    
+    // External Entity
+    USER [label="USER", shape=box, style="bold", penwidth=2];
+    
+    // Processes
+    P31 [label="3.1\n\nSentiment\nAnalysis", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P32 [label="3.2\n\nCreate\nEntry", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P33 [label="3.3\n\nUpdate\nEntry", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P34 [label="3.4\n\nDelete\nEntry", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P35 [label="3.5\n\nToggle\nFavorite", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    P36 [label="3.6\n\nJournal\nStatistics", shape=circle, width=1.1, height=1.1, style="bold", penwidth=2];
+    
+    // Data Store
+    D3 [label="D3: journal_entries", shape=cylinder, style="bold", penwidth=2];
+    
+    // Data Flows - Sentiment Analysis
+    P32 -> P31 [label="  Entry Content"];
+    P31 -> P32 [label="  Sentiment Score,\n  Mood Label"];
+    
+    // Data Flows - Create Entry
+    USER -> P32 [label="  Title,\n  Content,\n  Tags"];
+    P32 -> D3 [label="  Insert Entry\n  with Sentiment"];
+    D3 -> P32 [label="  Entry ID"];
+    P32 -> USER [label="  Entry Created,\n  Sentiment Report"];
+    
+    // Data Flows - Update Entry
+    USER -> P33 [label="  Entry ID,\n  Updated Content"];
+    P33 -> D3 [label="  Update Entry"];
+    D3 -> P33 [label="  Success"];
+    P33 -> P31 [label="  New Content"];
+    P31 -> P33 [label="  New Sentiment"];
+    P33 -> USER [label="  Update\n  Confirmed"];
+    
+    // Data Flows - Delete Entry
+    USER -> P34 [label="  Entry ID"];
+    P34 -> D3 [label="  Delete Entry"];
+    D3 -> P34 [label="  Success"];
+    P34 -> USER [label="  Deletion\n  Confirmed"];
+    
+    // Data Flows - Toggle Favorite
+    USER -> P35 [label="  Entry ID"];
+    P35 -> D3 [label="  Update\n  Favorite Flag"];
+    D3 -> P35 [label="  Success"];
+    P35 -> USER [label="  Favorite\n  Status"];
+    
+    // Data Flows - Journal Statistics
+    USER -> P36 [label="  Statistics\n  Request"];
+    P36 -> D3 [label="  Query All\n  Entries"];
+    D3 -> P36 [label="  Entry Data"];
+    P36 -> USER [label="  Total Entries,\n  Word Count,\n  Sentiment Trend"];
+    
+    // Layout arrangement
+    {rank=same; P31; P32;}
+    {rank=same; P33; P34;}
+    {rank=same; P35; P36;}
+}

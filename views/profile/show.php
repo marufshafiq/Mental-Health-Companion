@@ -458,7 +458,7 @@
                             <a href="edit_profile.php" class="btn btn-primary">
                                 <i class="fas fa-edit"></i> Edit Profile
                             </a>
-                            <a href="#" class="btn btn-secondary">
+                            <a href="change_password.php" class="btn btn-secondary">
                                 <i class="fas fa-key"></i> Change Password
                             </a>
                         </div>

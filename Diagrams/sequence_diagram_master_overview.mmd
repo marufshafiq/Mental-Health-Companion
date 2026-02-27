@@ -1,0 +1,103 @@
+%% Mental Health Companion System - Master Sequence Diagram
+%% Complete System Overview
+%% Academic Style - Left to Right Format
+
+sequenceDiagram
+    participant U as User
+    participant A as Admin
+    participant UI as User Interface
+    participant Auth as Authentication (1.0)
+    participant Mood as Mood Tracking (2.0)
+    participant Journal as Journal Management (3.0)
+    participant Chat as AI Chatbot (4.0)
+    participant Med as Meditation & Resources (5.0)
+    participant Profile as Profile Management (6.0)
+    participant Admin as Admin Panel (7.0)
+    participant DB as Database (D1-D8)
+    participant API as External API (OpenRouter AI)
+    
+    Note over U,API: System Overview - All 7 Subprocesses
+    
+    rect rgb(240, 240, 240)
+    Note over U,DB: 1.0 Authentication Management
+    U->>UI: Enter Credentials
+    UI->>Auth: Login/Signup Request
+    Auth->>DB: Query/Insert User (D1)
+    DB-->>Auth: Return User Data
+    Auth-->>UI: Return Session Token
+    UI-->>U: Grant Access to Dashboard
+    end
+    
+    rect rgb(240, 240, 240)
+    Note over U,DB: 2.0 Mood Tracking
+    U->>UI: Record Mood Entry
+    UI->>Mood: Submit Mood Data
+    Mood->>DB: Insert Mood Entry (D2)
+    DB-->>Mood: Confirm Entry
+    Mood->>Mood: Apply Strategy Pattern Analysis
+    Mood-->>UI: Return Analysis & Suggestions
+    UI-->>U: Display Mood Insights
+    end
+    
+    rect rgb(240, 240, 240)
+    Note over U,DB: 3.0 Journal Management
+    U->>UI: Create Journal Entry
+    UI->>Journal: Submit Journal Data
+    Journal->>Journal: Apply Factory Pattern (Type Selection)
+    Journal->>Journal: Perform Sentiment Analysis
+    Journal->>DB: Insert Journal Entry (D3)
+    DB-->>Journal: Return Entry ID
+    Journal-->>UI: Return Success & Sentiment
+    UI-->>U: Display Journal Dashboard
+    end
+    
+    rect rgb(240, 240, 240)
+    Note over U,API: 4.0 AI Chatbot Service
+    U->>UI: Send Chat Message
+    UI->>Chat: Submit Message
+    Chat->>DB: Store User Message (D4)
+    DB-->>Chat: Confirm Storage
+    Chat->>API: Request AI Response
+    API->>API: Process with DeepSeek Chat v3.1
+    API-->>Chat: Return AI Response
+    Chat->>DB: Store Bot Message (D4)
+    DB-->>Chat: Confirm Storage
+    Chat-->>UI: Return Bot Response
+    UI-->>U: Display Chat Conversation
+    end
+    
+    rect rgb(240, 240, 240)
+    Note over U,DB: 5.0 Meditation & Resources
+    U->>UI: Access Meditation Page
+    UI->>Med: Request Resources
+    Med->>Med: Calculate Daily Tip (Deterministic Algorithm)
+    Med->>DB: Fetch Tip & Resources (D5, D6)
+    DB-->>Med: Return Data
+    Med-->>UI: Return Tips & Resources
+    UI-->>U: Display Meditation Content
+    end
+    
+    rect rgb(240, 240, 240)
+    Note over U,DB: 6.0 Profile Management
+    U->>UI: Update Profile
+    UI->>Profile: Submit Profile Changes
+    Profile->>DB: Query Statistics (D1, D2, D3, D4)
+    DB-->>Profile: Return Aggregated Stats
+    Profile->>DB: Update User Profile (D1)
+    DB-->>Profile: Confirm Update
+    Profile-->>UI: Return Updated Profile
+    UI-->>U: Display Profile Page
+    end
+    
+    rect rgb(240, 240, 240)
+    Note over A,DB: 7.0 Admin Panel
+    A->>UI: Access Admin Dashboard
+    UI->>Admin: Verify Admin Role
+    Admin->>DB: Query All Databases (D1-D6)
+    DB-->>Admin: Return System Statistics
+    Admin->>Admin: Generate Analytics Report
+    Admin-->>UI: Return Analytics Dashboard
+    UI-->>A: Display System Analytics
+    end
+    
+    Note over U,API: Complete System Flow<br/>All 7 DFD Subprocesses Covered

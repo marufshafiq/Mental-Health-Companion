@@ -1,0 +1,47 @@
+digraph level_1_admin_panel {
+    // Graph settings for clean, academic appearance
+    graph [rankdir=LR, splines=ortho, nodesep=0.8, ranksep=1.2, bgcolor=white];
+    node [fontname="Arial", fontsize=11];
+    edge [fontname="Arial", fontsize=10];
+    
+    // Title
+    labelloc="t";
+    label="Level 1 DFD - 7.0 Admin Panel\n\n";
+    
+    // External Entity
+    ADMIN [label="ADMIN", shape=box, style="bold", penwidth=2];
+    
+    // Process
+    P71 [label="7.1\n\nGenerate\nSystem\nAnalytics", shape=circle, width=1.3, height=1.3, style="bold", penwidth=2];
+    
+    // Data Stores
+    D1 [label="D1: users", shape=cylinder, style="bold", penwidth=2];
+    D2 [label="D2: mood_entries", shape=cylinder, style="bold", penwidth=2];
+    D3 [label="D3: journal_entries", shape=cylinder, style="bold", penwidth=2];
+    D4 [label="D4: messages", shape=cylinder, style="bold", penwidth=2];
+    D6 [label="D6: resources", shape=cylinder, style="bold", penwidth=2];
+    
+    // Data Flows
+    ADMIN -> P71 [label="  Analytics\n  Request"];
+    
+    P71 -> D1 [label="  Query Total\n  & Active Users"];
+    D1 -> P71 [label="  User Count"];
+    
+    P71 -> D2 [label="  Query Mood\n  Entries"];
+    D2 -> P71 [label="  Mood Count"];
+    
+    P71 -> D3 [label="  Query Journal\n  Entries"];
+    D3 -> P71 [label="  Journal Count"];
+    
+    P71 -> D4 [label="  Query Message\n  Count"];
+    D4 -> P71 [label="  Message Count"];
+    
+    P71 -> D6 [label="  Query Resource\n  Count"];
+    D6 -> P71 [label="  Resource Count"];
+    
+    P71 -> ADMIN [label="  System Statistics:\n  Total Users,\n  Active Users (30d),\n  Total Journals,\n  Total Moods,\n  Total Messages,\n  Total Resources"];
+    
+    // Layout arrangement
+    {rank=same; D1; D2; D3;}
+    {rank=same; D4; D6;}
+}
